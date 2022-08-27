@@ -7,6 +7,10 @@ let Schema = mongoose.Schema;
 const UserSchema = new Schema({
   username: { type: String, required: true, maxLength: 20 },
   password: { type: String, required: true, maxLength: 20, minLenght: 6 },
+  admin: { type: Boolean, default: false },
+  member: { type: Boolean, default: false },
+  timeStamp: { type: Date, default: Date.now, required: true },
+  posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
 });
 
 UserSchema.pre('save', async function save(next) {
