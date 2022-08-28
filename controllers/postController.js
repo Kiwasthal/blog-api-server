@@ -1,6 +1,7 @@
 const Post = require('../models/post');
-const Users = require('../models/user');
+const User = require('../models/user');
 const Comment = require('../models/comment');
+const { body, validationResult } = require('express-validator');
 
 exports.allPosts = async (req, res, next) => {
   try {
@@ -45,3 +46,87 @@ exports.singePost = async (req, res, next) => {
 };
 
 // Admin Only
+
+exports.updatePost = async (req, res, next) => {
+  try {
+    if (req.user.admin) {
+      let post = await Post.findOneAndUpdate(req.params.postid, {
+        title: trq.body.title,
+        content: req.body.content,
+      });
+      if (!post)
+        return res
+          .status(404)
+          .json({ err: `No posts with id ${req.params.postid} found` });
+      res.status(200).json({
+        message: `Post with id ${req.params.postid} updated`,
+        post,
+      });
+    }
+    es.status(403).json({ message: 'You must be an admin to update the post' });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  try {
+    if (req.user.admin) {
+      let post = await Post.findByIdAndDelete({ _id: req.params.postid });
+      if (!post)
+        return res
+          .status(404)
+          .json({ err: `No posts with id ${req.params.postid} found` });
+      let commentsToDelete = await Comment.deleteMany({
+        postId: req.params.postid,
+      });
+      res.status(200).json({
+        message: `Post with id ${req.params.postid} deleted `,
+        comments: commentsToDelete,
+      });
+    } else
+      return res
+        .status(403)
+        .json({ message: 'You must be an admin to delete this post' });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+exports.createPost = [
+  body('title')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Add title for your post'),
+  body('content')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Add content for your post'),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        data: req.body,
+      });
+    }
+    try {
+      let post = new Post({
+        title: req.body.title,
+        content: req.body.content,
+        user: req.user._id,
+      });
+      post.save(err => {
+        if (err) return next(err);
+        console.log('post saved');
+        res.status(200).json({ post, token: req.user });
+      });
+      await User.findByIdAndUpdate(
+        { _id: post.user },
+        { $push: { posts: post } }
+      );
+    } catch (err) {
+      res.status(400).json(err);
+    }
+  },
+];
