@@ -1,7 +1,6 @@
 const express = require('express');
 const apiRouter = require('./routes/api');
 const app = express();
-const path = require('path');
 const passport = require('passport');
 const compression = require('compression');
 const helmet = require('helmet');
