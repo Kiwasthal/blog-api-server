@@ -45,8 +45,6 @@ router.post(
   post_Controller.createPost
 );
 
-module.exports = router;
-
 // --- Comments
 
 router.post(
@@ -92,3 +90,5 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   user_Controller.userPosts
 );
+
+module.exports = router;
