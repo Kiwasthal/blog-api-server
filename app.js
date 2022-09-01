@@ -25,7 +25,7 @@ db.on('error', console.error.bind(console, 'error connecting to database'));
 // --- Cors Origin
 
 let corsOptions = {
-  origin: ['http://localhost:3000'],
+  origin: ['http://localhost:3000', 'http://localhost:8080'],
   optionSuccessStatus: 200,
 };
 
