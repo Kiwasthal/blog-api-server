@@ -13,7 +13,11 @@ exports.login = async (req, res, next) => {
       req.login(user, { session: false }, err => {
         if (err) return next(err);
 
-        const body = { _id: user._id, username: user.username };
+        const body = {
+          _id: user._id,
+          username: user.username,
+          admin: user.admin,
+        };
         const token = jwt.sign({ user: body }, process.env.SECRET_KEY, {
           expiresIn: '1d',
         });
@@ -69,3 +73,18 @@ exports.register = [
     });
   },
 ];
+
+// exports.adminregister = (req, res, next) => {
+//   const user = new User({
+//     username: req.body.username,
+//     password: req.body.password,
+//     admin: true,
+//     member: true,
+//   });
+//   user.save(err => {
+//     if (err) return next(err);
+//     res.status(200).json({
+//       message: 'User successfully created',
+//     });
+//   });
+// };

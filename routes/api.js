@@ -91,4 +91,6 @@ router.get(
   user_Controller.userPosts
 );
 
+// router.post('/admin', auth_Controller.adminregister);
+
 module.exports = router;

@@ -50,20 +50,23 @@ exports.singePost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   try {
     if (req.user.admin) {
-      let post = await Post.findOneAndUpdate(req.params.postid, {
-        title: trq.body.title,
+      let post = await Post.findByIdAndUpdate(req.params.postid, {
+        title: req.body.title,
         content: req.body.content,
       });
-      if (!post)
+      if (!post) {
         return res
           .status(404)
-          .json({ err: `No posts with id ${req.params.postid} found` });
+          .json({ err: `No posts with id ${req.params.postid} exists` });
+      }
       res.status(200).json({
         message: `Post with id ${req.params.postid} updated`,
-        post,
+        post: post,
       });
-    }
-    es.status(403).json({ message: 'You must be an admin to update the post' });
+    } else
+      res
+        .status(403)
+        .json({ message: 'You must be an admin to update the post' });
   } catch (err) {
     return next(err);
   }
