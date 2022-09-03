@@ -76,21 +76,23 @@ exports.deletePost = async (req, res, next) => {
   try {
     if (req.user.admin) {
       let post = await Post.findByIdAndDelete({ _id: req.params.postid });
-      if (!post)
+      if (!post) {
         return res
           .status(404)
-          .json({ err: `No posts with id ${req.params.postid} found` });
-      let commentsToDelete = await Comment.deleteMany({
+          .json({ err: `No posts with id ${req.params.postid} exists` });
+      }
+      let deletedComments = await Comment.deleteMany({
         postId: req.params.postid,
       });
       res.status(200).json({
-        message: `Post with id ${req.params.postid} deleted `,
-        comments: commentsToDelete,
+        message: `Post with id ${req.params.postid} deleted successfully`,
+        comments: deletedComments,
       });
-    } else
+    } else {
       return res
         .status(403)
-        .json({ message: 'You must be an admin to delete this post' });
+        .json({ message: 'You must be an admin to perform this action' });
+    }
   } catch (err) {
     return next(err);
   }

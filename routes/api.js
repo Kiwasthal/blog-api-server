@@ -34,7 +34,7 @@ router.put(
 );
 
 router.delete(
-  'posts/:postid',
+  '/posts/:postid',
   passport.authenticate('jwt', { session: false }),
   post_Controller.deletePost
 );
