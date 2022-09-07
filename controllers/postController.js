@@ -20,10 +20,10 @@ exports.topPosts = async (req, res, next) => {
   try {
     let posts = await Post.find(
       {},
-      { title: 1, content: 1, timeStamp: 1, likeCount: 1, comments: 1 }
+      { title: 1, content: 1, timestamp: 1, likeCount: 1, comments: 1 }
     )
       .sort([['likeCount', 'descending']])
-      .limit(10)
+      .limit(5)
       .populate('user', { username: 1, _id: 0 });
     return res.status(200).json(posts);
   } catch (err) {
@@ -33,12 +33,13 @@ exports.topPosts = async (req, res, next) => {
 
 exports.singePost = async (req, res, next) => {
   try {
-    let post = await Post.find({ _id: req.params.postid }).populate('author', {
+    let post = await Post.find({ _id: req.params.postid }).populate('user', {
       username: 1,
     });
 
-    if (!post || post.length === 0)
-      return res.status(404).json({ message: 'Could not find post' });
+    if (!post || post.length == 0) {
+      return res.status(404).json({ message: 'No post with id exists' });
+    }
     return res.status(200).json({ post });
   } catch (err) {
     return res.json({ message: 'Post does not exist' });
