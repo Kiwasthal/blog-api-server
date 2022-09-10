@@ -106,3 +106,46 @@ exports.deleteComment = async (req, res, next) => {
     return next(err);
   }
 };
+
+exports.updateLike = async (req, res, next) => {
+  try {
+    let commentLiked = await Comment.find(
+      {
+        _id: req.body.commentid,
+      },
+      {
+        likeCount: 1,
+        likes: {
+          $elemMatch: { $eq: req.user._id },
+        },
+      }
+    );
+    if (commentLiked[0].likes || !commentLiked[0].likes.length) {
+      let result = await Comment.updateOne(
+        {
+          _id: req.body.commentid,
+          likes: { $ne: req.user._id },
+        },
+        {
+          $inc: { likeCount: +1 },
+          $push: { likes: req.user._id },
+        }
+      );
+      return res.status(200).json({ result, comment: commentLiked });
+    } else {
+      let result = await Comment.updateOne(
+        {
+          _id: req.body.commentid,
+          likes: req.user._id,
+        },
+        {
+          $inc: { likeCount: -1 },
+          $pull: { likes: req.user._id },
+        }
+      );
+      return res.status(200).json({ result, comment: commentLiked });
+    }
+  } catch (err) {
+    res.status(400).json({ err });
+  }
+};

@@ -136,3 +136,46 @@ exports.createPost = [
     }
   },
 ];
+
+exports.updateLike = async (req, res, next) => {
+  try {
+    let userLiked = await Post.find(
+      {
+        _id: req.body.postid,
+      },
+      {
+        likeCount: 1,
+        likes: {
+          $elemMatch: { $eq: req.user_id },
+        },
+      }
+    );
+    if (userLiked[0].likes === undefined || userLiked[0].likes.length === 0) {
+      let result = await Post.updateOne(
+        {
+          _id: req.params.postid,
+          likes: { $ne: req.user._id },
+        },
+        {
+          $inc: { likeCount: +1 },
+          $push: { likes: req.user._id },
+        }
+      );
+      return res.status(200).json({ result, post: userLiked });
+    } else {
+      let result = await Post.updateOne(
+        {
+          _id: req.params.postid,
+          likes: req.user._id,
+        },
+        {
+          $inc: { likeCount: -1 },
+          $pull: { likes: req.user._id },
+        }
+      );
+      return res.status(200).json({ result, post: userLiked });
+    }
+  } catch (err) {
+    return res.status(400).json('error');
+  }
+};

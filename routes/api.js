@@ -23,6 +23,18 @@ router.get('/posts/:postid', post_Controller.singePost);
 
 router.get('/posts/:postid/comments', comment_Controller.commentsOfPost);
 
+router.put(
+  '/posts/:postid',
+  passport.authenticate('jwt', { session: false }),
+  post_Controller.updateLike
+);
+
+router.put(
+  '/comments',
+  passport.authenticate('jwt', { session: false }),
+  comment_Controller.updateLike
+);
+
 // Auth Routes
 
 // --- Posts

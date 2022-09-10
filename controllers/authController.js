@@ -74,6 +74,9 @@ exports.register = [
   },
 ];
 
+//--- Supplementary path providing admin registration ---
+// --- Used for CMS ---
+
 // exports.adminregister = (req, res, next) => {
 //   const user = new User({
 //     username: req.body.username,
