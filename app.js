@@ -25,7 +25,11 @@ db.on('error', console.error.bind(console, 'error connecting to database'));
 // --- Cors Origin
 
 let corsOptions = {
-  origin: ['https://kiwasthal-blog.vercel.app', 'http://localhost:8080'],
+  origin: [
+    'https://kiwasthal-blog.vercel.app',
+    'https://kiwasthal.github.io/blog-api-cms/',
+    'http://localhost:8080',
+  ],
   optionSuccessStatus: 200,
 };
 
