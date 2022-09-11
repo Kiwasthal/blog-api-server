@@ -25,13 +25,13 @@ db.on('error', console.error.bind(console, 'error connecting to database'));
 // --- Cors Origin
 
 let corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:8080'],
+  origin: ['https://kiwasthal-blog.vercel.app', 'http://localhost:8080'],
   optionSuccessStatus: 200,
 };
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // --- Pasport Authentication
 
